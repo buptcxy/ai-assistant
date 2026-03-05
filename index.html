@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的AI助手 - 每日快讯</title>
+    <title>AI助手 - 每日快讯</title>
     <style>
         * {
             margin: 0;
@@ -56,85 +56,92 @@
             font-size: 14px;
         }
         
-        .intro {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .intro h2 {
-            font-size: 18px;
-            margin-bottom: 12px;
-            color: #a8c0ff;
-        }
-        
-        .intro p {
-            color: #8892b0;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-        
-        .schedule {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .schedule h2 {
-            font-size: 18px;
+        .tabs {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
-        .schedule-item {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            transition: all 0.3s ease;
-        }
-        
-        .schedule-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateX(4px);
-        }
-        
-        .schedule-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .time {
-            min-width: 70px;
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #8892b0;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
             font-size: 14px;
-            font-weight: 600;
-            color: #667eea;
+        }
+        
+        .tab.active {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+            color: #fff;
         }
         
         .content {
+            display: none;
+        }
+        
+        .content.active {
+            display: block;
+        }
+        
+        .news-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .news-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .news-emoji {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+        
+        .news-title {
+            font-size: 16px;
+            font-weight: 500;
             flex: 1;
         }
         
-        .content .title {
-            font-size: 15px;
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-        
-        .content .desc {
+        .news-time {
             font-size: 12px;
             color: #8892b0;
         }
         
-        .emoji {
-            font-size: 24px;
-            margin-right: 16px;
+        .news-body {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #ccc;
+            white-space: pre-wrap;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #8892b0;
+            padding: 40px;
+        }
+        
+        .error {
+            text-align: center;
+            color: #ff6b6b;
+            padding: 40px;
+        }
+        
+        .empty {
+            text-align: center;
+            color: #8892b0;
+            padding: 40px;
         }
         
         .footer {
@@ -143,92 +150,129 @@
             color: #8892b0;
             font-size: 12px;
         }
-        
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-        
-        @media (max-width: 480px) {
-            body {
-                padding: 20px 16px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .schedule-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .emoji {
-                margin-bottom: 8px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <div class="avatar">🤖</div>
-            <h1>你的AI小助手</h1>
-            <p>每天自动推送精选资讯</p>
+            <h1>AI小助手</h1>
+            <p>每日自动推送精选资讯</p>
         </div>
         
-        <div class="intro">
-            <h2>🌟 关于我</h2>
-            <p>我是一个AI助手，可以帮你查天气、搜新闻、分析股票、设置提醒...还能联网搜索、整理信息！每天自动推送精选资讯，让你随时掌握最新动态～</p>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('latest')">最新消息</div>
+            <div class="tab" onclick="switchTab('history')">历史记录</div>
+            <div class="tab" onclick="switchTab('schedule')">推送安排</div>
         </div>
         
-        <div class="schedule">
-            <h2>📅 每日快讯安排</h2>
-            
-            <div class="schedule-item">
-                <span class="emoji">🌅</span>
-                <div class="content">
-                    <div class="title">07:00 国际要闻早报</div>
-                    <div class="desc">过去24小时全球重要新闻</div>
+        <div id="latest" class="content active">
+            <div class="loading">加载中...</div>
+        </div>
+        
+        <div id="history" class="content">
+            <div class="loading">加载中...</div>
+        </div>
+        
+        <div id="schedule" class="content">
+            <div class="news-item">
+                <div class="news-header">
+                    <span class="news-emoji">🌅</span>
+                    <span class="news-title">07:00 国际要闻早报</span>
                 </div>
+                <div class="news-body">过去24小时全球重要新闻</div>
             </div>
-            
-            <div class="schedule-item">
-                <span class="emoji">🤖</span>
-                <div class="content">
-                    <div class="title">08:00 AI热点早报</div>
-                    <div class="desc">AI行业最新动态与大模型资讯</div>
+            <div class="news-item">
+                <div class="news-header">
+                    <span class="news-emoji">🤖</span>
+                    <span class="news-title">08:00 AI热点早报</span>
                 </div>
+                <div class="news-body">AI行业最新动态与大模型资讯</div>
             </div>
-            
-            <div class="schedule-item">
-                <span class="emoji">✈️</span>
-                <div class="content">
-                    <div class="title">09:00 民航业新闻早报</div>
-                    <div class="desc">携程/去哪儿/同程及航司直销动态</div>
+            <div class="news-item">
+                <div class="news-header">
+                    <span class="news-emoji">✈️</span>
+                    <span class="news-title">09:00 民航业新闻早报</span>
                 </div>
+                <div class="news-body">携程/去哪儿/同程及航司直销动态</div>
             </div>
-            
-            <div class="schedule-item">
-                <span class="emoji">📊</span>
-                <div class="content">
-                    <div class="title">18:00 A股港股收盘报告</div>
-                    <div class="desc">恒生互联网/上证300/白酒/消费指数</div>
+            <div class="news-item">
+                <div class="news-header">
+                    <span class="news-emoji">📊</span>
+                    <span class="news-title">18:00 A股港股收盘报告</span>
                 </div>
+                <div class="news-body">恒生互联网/上证300/白酒/消费指数</div>
             </div>
-            
-            <div class="schedule-item">
-                <span class="emoji">🌤️</span>
-                <div class="content">
-                    <div class="title">22:00 明日天气穿衣提醒</div>
-                    <div class="desc">北京明日天气与穿衣建议</div>
+            <div class="news-item">
+                <div class="news-header">
+                    <span class="news-emoji">🌤️</span>
+                    <span class="news-title">22:00 明日天气穿衣提醒</span>
                 </div>
+                <div class="news-body">北京明日天气与穿衣建议</div>
             </div>
         </div>
         
         <div class="footer">
-            <p>🤖 由 AI 助手驱动 · 让信息触手可及</p>
+            <p>🤖 由 AI 助手驱动</p>
         </div>
     </div>
+    
+    <script>
+        let newsData = [];
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+        
+        function renderNews(containerId, newsList) {
+            const container = document.getElementById(containerId);
+            if (!newsList || newsList.length === 0) {
+                container.innerHTML = '<div class="empty">暂无消息</div>';
+                return;
+            }
+            
+            const emojiMap = {
+                '国际要闻早报': '🌅',
+                'AI热点早报': '🤖',
+                '民航业新闻早报': '✈️',
+                'A股港股收盘报告': '📊',
+                '明日天气穿衣提醒': '🌤️'
+            };
+            
+            container.innerHTML = newsList.map(news => `
+                <div class="news-item">
+                    <div class="news-header">
+                        <span class="news-emoji">${emojiMap[news.type] || '📰'}</span>
+                        <span class="news-title">${news.type}</span>
+                        <span class="news-time">${news.time}</span>
+                    </div>
+                    <div class="news-body">${news.content}</div>
+                </div>
+            `).join('');
+        }
+        
+        async function loadNews() {
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/buptcxy/ai-assistant/main/data.json');
+                if (!response.ok) throw new Error('Failed to load');
+                const data = await response.json();
+                newsData = data.news || [];
+                
+                // 最新消息：只显示最近5条
+                renderNews('latest', newsData.slice(0, 5));
+                
+                // 历史记录：显示全部
+                renderNews('history', newsData);
+            } catch (e) {
+                document.getElementById('latest').innerHTML = '<div class="error">暂无消息</div>';
+                document.getElementById('history').innerHTML = '<div class="error">暂无消息</div>';
+            }
+        }
+        
+        loadNews();
+    </script>
 </body>
 </html>
